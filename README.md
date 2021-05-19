@@ -9,7 +9,6 @@ First, we maybe need create empty project. Then, we unmark src folder and create
 _src (unmark if needed)
 |__main
     |__java
-    |__resources
     |__webapp
         |__WEB-INF
             |__view
@@ -111,3 +110,85 @@ When add page, we must take care of servlet bean xml config:
 ```
 
 It means we must create page with type .jsp in /WEB-INF/view/ and the name of file will return in method of controller if we want to return a page like above (ex: main-menu will be resolved as /WEB-INF/view/main-menu.jsp)
+
+## Parse data from controller to page and page to controller using Model
+### Page to controller
+First, in page we will create <form></form> tag and <input name="" /> tag to input value and it will parse to request parameter when we submit:
+
+```
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World - Input Form</title>
+</head>
+<body>
+    <form action="processForm" method="GET">
+        <input type="text" name="studentName" placeholder="What's your name ?" />
+        <input type="submit" />
+    </form>
+</body>
+</html>
+```
+
+Then, in method process that form (ex: processForm) we add 2 param HttpServletRequest and Model. We will get value studentName by request.getParameter("...");
+
+## From controller to page
+
+In method processing form action:
+```
+...
+    @RequestMapping("/processForm")
+    public String processForm(HttpServletRequest request, Model model) {
+        String name = request.getParameter("studentName");
+
+        name = name.toUpperCase();
+
+        model.addAttribute("message", "Yo! " + name);
+
+        return "helloworld";
+    }
+...
+```
+
+and then in view, we can use ${attibute-name} get value of mode:
+```
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World - Input Form</title>
+</head>
+<body>
+    Hello World of Spring !
+
+    <br><br>
+
+    Student name: ${message}
+</body>
+</html>
+```
+
+## Using static resources in Spring MVC
+
+In order to use static resources like Images, CSS or javascript, we config application XML like this:
+```
+...
+<mvc:resources mapping="/resources/**" location="/resources/"></mvc:resources> 
+...
+```
+
+And create folder resources based on config:
+```
+_src (unmark if needed)
+|__main
+    |__java
+    |__resources
+    |__webapp
+        |__WEB-INF
+        |    |__view
+        |__resources    
+```
+
+To get static file, we use src and ${} like this:
+```
+<img src="${pageContext.request.contextPath}/resources/images/spring-logo.png">
+```

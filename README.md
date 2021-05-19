@@ -78,3 +78,36 @@ Then, we add We add /src/main/webapp/WEB-INF/spring-mvc-demo-servlet to configur
 
 </beans>
 ```
+
+## Add Controller Class
+@Controller' inheritance @Component supporting for scan bean.
+```
+package com.sang;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class HomeController {
+
+    @RequestMapping("/")
+    public String showHomePage(){
+        return "main-menu";
+    }
+
+}
+```
+
+## Add page in view
+When add page, we must take care of servlet bean xml config:
+```
+...
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/view/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+...
+```
+
+It means we must create page with type .jsp in /WEB-INF/view/ and the name of file will return in method of controller if we want to return a page like above (ex: main-menu will be resolved as /WEB-INF/view/main-menu.jsp)
